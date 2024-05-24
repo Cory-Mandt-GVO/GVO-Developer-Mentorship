@@ -61,7 +61,7 @@ define(
                     });
 
                     // Promotional item
-                    if (item === '1234') {
+                    if (item === '1234' && item === '4321') {
 
                         // Add coupon message
                         rec.setValue({
