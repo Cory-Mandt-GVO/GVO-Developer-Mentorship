@@ -43,9 +43,9 @@ define(
 
             } else {
 
-                var firstName = context.request.parameters.custpage_firstname;
-                var lastName = context.request.parameters.custpage_lastname;
-                var email = context.request.parameters.custpage_email;
+                const firstName = context.request.parameters.custpage_firstname;
+                const lastName = context.request.parameters.custpage_lastname;
+                const email = context.request.parameters.custpage_email;
 
                 try {
 
