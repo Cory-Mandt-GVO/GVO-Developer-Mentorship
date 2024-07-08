@@ -6,18 +6,14 @@ define(
     [
         'N/runtime',
         'N/email',
-        'N/render'
+        'N/query'
     ],
     /**
      * @param {N_runtime} nsRuntime
      * @param {N_email} nsEmail
-     * @param {N_render} nsRender
+     * @param {N_query} nsQuery
      */
-    function (nsRuntime, nsEmail, nsRender) {
-
-        function getContactsToEmail() {
-            // Logic for to determine customer contacts to email
-        }
+    function (nsRuntime, nsEmail, nsQuery) {
 
         /**
         * @param {UserEventContext.beforeLoad} context
@@ -28,13 +24,13 @@ define(
 
                 const form = context.form;
 
-                form.clientScriptModulePath = 'SuiteScript/GVO/Customer_EmailContacts_CS.js'
+                // form.clientScriptModulePath = 'SuiteScript/GVO/Customer_EmailContacts_CS.js'
 
                 // Add button to UI
                 form.addButton({
                     id: 'custpage_gvo_salesorder_ue',
                     label: 'Email To Contacts',
-                    functionName: 'emailToContacts'
+                    functionName: 'alert(\'Coming soon...\')'
                 });
             }
         }
@@ -44,24 +40,26 @@ define(
         */
         function beforeSubmit(context) {
 
+            const isTesting = nsRuntime.getCurrentScript().getParameter({ name: 'custscript_devment_salesorder_ue_test' });
+
             if (
-                nsRuntime.executionContext === nsRuntime.ContextType.REST_WEBSERVICES &&
+                (isTesting || nsRuntime.executionContext === nsRuntime.ContextType.REST_WEBSERVICES) &&
                 context.type === context.UserEventType.CREATE
             ) {
 
                 const rec = context.newRecord;
-                const lineCount = rec.getLineCount({ sublistId: 'items' });
+                const lineCount = rec.getLineCount({ sublistId: 'item' });
 
                 for (let i = 0; i < lineCount; i += 1) {
 
                     let item = rec.getSublistValue({
                         fieldId: 'item',
                         line: i,
-                        sublistId: 'items'
+                        sublistId: 'item'
                     });
 
                     // Promotional item
-                    if (item === '1234' && item === '4321') {
+                    if (item === '359') {
 
                         // Add coupon message
                         rec.setValue({
@@ -83,24 +81,33 @@ define(
             if (context.type === context.UserEventType.CREATE) {
 
                 const rec = context.newRecord;
-                const tranId = rec.getValue({ fieldId: 'tranid' });
 
-                // Render PDF version of sales order
-                const pdf = nsRender.transaction({
-                    entityId: rec.id,
-                    printMode: nsRender.PrintMode.PDF
-                });
+                const emailQuery = nsQuery.runSuiteQL({
+                    query: `
+                        SELECT
+                            email,
+                            custbody_gvo_message AS message
+                        FROM
+                            transaction AS t
+                        WHERE
+                            t.type = 'SalesOrd' AND
+                            t.id = ${rec.id} AND
+                            t.custbody_gvo_message IS NOT NULL
+                    `
+                }).asMappedResults();
 
-                // Get customer contacts to email to
-                const contacts = getContactsToEmail();
+                if (emailQuery.length) {
 
-                nsEmail.send({
-                    author: '1234', // Employee Record ID
-                    body: 'Please find your sales order attached',
-                    recipients: contacts,
-                    subject: `Sales Order #${tranId}`,
-                    attachments: [pdf]
-                });
+                    nsEmail.send({
+                        author: '37', // Employee Record ID
+                        body: emailQuery[0].message,
+                        recipients: emailQuery[0].email,
+                        subject: `A Little Something Extra for Purchasing from us...`,
+                        relatedRecords: {
+                            transactionId: rec.id
+                        }
+                    });
+                }
             }
         }
 
