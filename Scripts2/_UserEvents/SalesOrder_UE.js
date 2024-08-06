@@ -23,14 +23,16 @@ define(
             if (context.type === context.UserEventType.VIEW) {
 
                 const form = context.form;
+                const rec = context.newRecord;
+                const customerId = rec.getValue({ fieldId: 'entity' });
 
-                // form.clientScriptModulePath = 'SuiteScript/GVO/Customer_EmailContacts_CS.js'
+                form.clientScriptModulePath = 'SuiteScripts/DevMentorship/DevMentorship_EmailContacts_CS.js';
 
                 // Add button to UI
                 form.addButton({
                     id: 'custpage_gvo_salesorder_ue',
                     label: 'Email To Contacts',
-                    functionName: 'alert(\'Coming soon...\')'
+                    functionName: `sendEmailToContacts(${customerId})`
                 });
             }
         }
