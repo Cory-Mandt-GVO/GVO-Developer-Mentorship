@@ -50,15 +50,15 @@ define(
                 message: message
             }).then(function() {
 
+                const info = nsUiMessage.create({
+                    type: nsUiMessage.Type.INFORMATION,
+                    title: 'Sending Email',
+                    message: 'We\'re working on sending that email...'
+                });
+
+                info.show();
+
                 promise = new Promise(function(resolve, reject) {
-
-                    const info = nsUiMessage.create({
-                        type: nsUiMessage.Type.INFORMATION,
-                        title: 'Sending Email',
-                        message: 'We\'re working on sending that email...'
-                    });
-
-                    info.show();
 
                     // TODO: Replace with logic for sending email
                     setTimeout(function() {
