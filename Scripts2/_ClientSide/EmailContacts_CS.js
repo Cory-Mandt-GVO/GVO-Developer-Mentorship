@@ -48,38 +48,42 @@ define(
             nsUiDialog.confirm({
                 title: 'Send Email to the Following Contacts?',
                 message: message
-            }).then(function() {
+            }).then(function(data) {
 
-                const info = nsUiMessage.create({
-                    type: nsUiMessage.Type.INFORMATION,
-                    title: 'Sending Email',
-                    message: 'We\'re working on sending that email...'
-                });
+                // If confirmed by user
+                if (data === true) {
 
-                info.show();
+                    const info = nsUiMessage.create({
+                        type: nsUiMessage.Type.INFORMATION,
+                        title: 'Sending Email',
+                        message: 'We\'re working on sending that email...'
+                    });
 
-                promise = new Promise(function(resolve, reject) {
+                    info.show();
 
-                    // TODO: Replace with logic for sending email
-                    setTimeout(function() {
-                        info.hide();
-                        resolve();
-                    }, 4000);
-                });
+                    promise = new Promise(function(resolve, reject) {
 
-                promise.then(function() {
-                    nsUiMessage.create({
-                        type: nsUiMessage.Type.CONFIRMATION,
-                        title: 'Email Sent',
-                        message: 'Successfully sent email to contacts'
-                    }).show();
-                }).catch(function() {
-                    nsUiMessage.create({
-                        type: nsUiMessage.Type.ERROR,
-                        title: 'Error Sending Email',
-                        message: 'Sorry, we couldn\'t send that email'
-                    }).show();
-                });
+                        // TODO: Replace with logic for sending email
+                        setTimeout(function() {
+                            info.hide();
+                            resolve();
+                        }, 4000);
+                    });
+
+                    promise.then(function() {
+                        nsUiMessage.create({
+                            type: nsUiMessage.Type.CONFIRMATION,
+                            title: 'Email Sent',
+                            message: 'Successfully sent email to contacts'
+                        }).show();
+                    }).catch(function() {
+                        nsUiMessage.create({
+                            type: nsUiMessage.Type.ERROR,
+                            title: 'Error Sending Email',
+                            message: 'Sorry, we couldn\'t send that email'
+                        }).show();
+                    });
+                }
             });
         }
 
