@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "amd",
+    "baseUrl": "."
+  },
+  "include": [
+    "C:/Repos/typings/**/*",
+    "./**/*",
+    "/home/Repos/typings/**/*",
+    "jest"
+  ]
+}

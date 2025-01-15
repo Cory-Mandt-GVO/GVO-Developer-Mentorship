@@ -21,12 +21,12 @@ define(
                 WHERE
                     t.trandate > (SYSDATE - 30) AND
                     t.type = 'SalesOrd'
-            `
+            `;
 
             return {
                 type: 'suiteql',
                 query: query
-            }
+            };
         }
 
         /**
@@ -52,7 +52,7 @@ define(
                     soId: results.soid,
                     email: results.email
                 }
-            })
+            });
         }
 
         /**
